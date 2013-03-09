@@ -7,8 +7,8 @@ EventEmitter = require('events').EventEmitter;
 User                                                    = require './user'
 Brain                                                   = require './brain'
 Response                                                = require './response'
-{Listener,TextListener}                                 = require './listener'
-{TextMessage,EnterMessage,LeaveMessage,CatchAllMessage} = require './message'
+{Listener,TextListener,ObjectListener}                                = require './listener'
+{TextMessage,ObjectMessage,EnterMessage,LeaveMessage,CatchAllMessage} = require './message'
 
 HUBOT_DEFAULT_ADAPTERS = [
   'campfire',
@@ -58,6 +58,7 @@ class Robot
   # Returns nothing.
   hear: (regex, callback) ->
     @listeners.push new TextListener(@, regex, callback)
+    @listeners.push new ObjectListener(@, regex, callback)
 
   # Public: Adds a Listener that attempts to match incoming messages directed
   # at the robot based on a Regex. All regexes treat patterns like they begin
@@ -85,6 +86,7 @@ class Robot
       newRegex = new RegExp("^[@]?#{@name}[:,]?\\s*(?:#{pattern})", modifiers)
 
     @listeners.push new TextListener(@, newRegex, callback)
+    @listeners.push new ObjectListener(@, newRegex, callback)
 
   # Public: Adds a Listener that triggers when anyone enters the room.
   #
@@ -325,7 +327,7 @@ class Robot
     user = { room: room }
     @adapter.send user, strings...
 
-  # Public: A wrapper around the EventEmitter API to make usage 
+  # Public: A wrapper around the EventEmitter API to make usage
   # semanticly better.
   #
   # event    - The event name.
@@ -336,7 +338,7 @@ class Robot
   on: (event, args...) ->
     @events.on event, args...
 
-  # Public: A wrapper around the EventEmitter API to make usage 
+  # Public: A wrapper around the EventEmitter API to make usage
   # semanticly better.
   #
   # event   - The event name.

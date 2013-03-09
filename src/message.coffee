@@ -28,6 +28,22 @@ class TextMessage extends Message
   match: (regex) ->
     @text.match regex
 
+class ObjectMessage extends Message
+  # Represents an incoming message from the chat.
+  #
+  # user - A User instance that sent the message.
+  # object - A Javascript Object message.
+  constructor: (@user, @message, @id) ->
+    super @user
+
+  # Determines if the message matches the given regex.
+  #
+  # regex - A Regex to check.
+  #
+  # Returns a Match object or null.
+  match: (regex) ->
+    @message.body.match regex
+
 # Represents an incoming user entrance notification.
 #
 # user - A User instance for the user who entered.
@@ -51,6 +67,7 @@ class CatchAllMessage extends Message
 module.exports = {
   Message
   TextMessage
+  ObjectMessage
   EnterMessage
   LeaveMessage
   CatchAllMessage
